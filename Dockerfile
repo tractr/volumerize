@@ -5,8 +5,6 @@ MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
 
 ARG JOBBER_VERSION=1.4.4
 ARG DOCKER_VERSION=20.10.6
-ARG DUPLICITY_VERSION=0.8.21
-ARG DUPLICITY_SERIES=0.8
 
 COPY --from=megacmd-compiler /usr/local/bin/mega-* /usr/local/bin/
 COPY --from=megacmd-compiler /usr/local/lib/libmega* /usr/local/lib/
@@ -68,12 +66,6 @@ RUN pip install \
       b2sdk \
       dropbox
 RUN mkdir -p /etc/volumerize /volumerize-cache /opt/volumerize
-RUN curl -fSL "https://download-mirror.savannah.gnu.org/releases/duplicity/duplicity-${DUPLICITY_VERSION}.tar.gz" -o /tmp/duplicity.tar.gz
-ARG DUPLICITY_SHA="2d048377c839ae56fc2828997c9aa7ba8c339e815e1e2ae738652037508ec276a2c72583687da34408fadd4839011e242b51bc73cca954227fc51db5683c258c"
-RUN echo 'Calculated checksum: '$(sha512sum /tmp/duplicity.tar.gz)
-#RUN echo "$DUPLICITY_SHA  /tmp/duplicity.tar.gz" | sha512sum -c -
-RUN tar -xzvf /tmp/duplicity.tar.gz -C /tmp
-RUN cd /tmp/duplicity-${DUPLICITY_VERSION} && python3 setup.py install
 
 # Prepare envs for jobber and docker
 ARG CONTAINER_UID=1000
@@ -145,9 +137,6 @@ RUN apk del \
       musl-dev \
       librsync-dev \
       make
-
-RUN apk add \
-        openssl
 
 RUN rm -rf /var/cache/apk/* && rm -rf /tmp/*
 
